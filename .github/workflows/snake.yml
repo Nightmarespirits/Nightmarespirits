@@ -1,0 +1,17 @@
+name: Generate Snake
+on:
+  schedule: [{cron: "0 */6 * * *"}]   # cada 6 h
+  workflow_dispatch:
+jobs:
+  snake:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Platane/snk@v3        # acción oficial
+        with:
+          github_user_name: Nightmarespirits
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+      - uses: EndBug/add-and-commit@v9
+        with:
+          add: 'dist/github-contribution-grid-snake.svg'
+          message: 'chore: update snake'
