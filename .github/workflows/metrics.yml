@@ -1,0 +1,14 @@
+name: Generar GitHub Metrics
+on:
+  schedule: [{cron: "0 6 * * *"}]   # cada día 06 UTC
+  workflow_dispatch:               # botón “Run workflow”
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: lowlighter/metrics@latest
+        with:
+          filename: github-metrics.svg
+          token: ${{ secrets.GH_TOKEN }}        # tu PAT
+          committer_token: ${{ secrets.GH_TOKEN }}
+          base: header, activity, followers
