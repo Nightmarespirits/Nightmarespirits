@@ -1,14 +1,28 @@
 name: Generar GitHub Metrics
 on:
-  schedule: [{cron: "0 6 * * *"}]   # cada día 06 UTC
-  workflow_dispatch:               # botón “Run workflow”
+  schedule:
+    - cron: '0 6 * * *'   # cada día a las 06 UTC
+  workflow_dispatch:       # botón “Run workflow” en Actions
+
+permissions:               # ← permite hacer commit con GITHUB_TOKEN
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: lowlighter/metrics@latest
+      # 1) Clona tu repositorio de perfil
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          filename: github-metrics.svg
-          token: ${{ secrets.GH_TOKEN }}        # tu PAT
+          fetch-depth: 0         # conserva todo el historial
+
+      # 2) Genera el SVG github-metrics.svg
+      - name: Generate metrics
+        uses: lowlighter/metrics@latest
+        with:
+          filename: github-metrics.svg     # ruta/nombre del archivo
+          token: ${{ secrets.GH_TOKEN }}   # ← tu PAT clásico
           committer_token: ${{ secrets.GH_TOKEN }}
           base: header, activity, followers
+          plugin_lines: yes                # ejemplo de plugin opcional
