@@ -1,17 +1,33 @@
 name: Generate Snake
 on:
-  schedule: [{cron: "0 */6 * * *"}]   # cada 6 h
+  schedule: [{ cron: '0 */6 * * *' }]   # cada 6 h
   workflow_dispatch:
+
+permissions:            # ← 1) habilita push con GITHUB_TOKEN
+  contents: write
+
 jobs:
   snake:
     runs-on: ubuntu-latest
     steps:
-      - uses: Platane/snk@v3        # acción oficial
+      # 2) Clona el repo completo (hace falta el historial para los commits)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0              # conserva todo el historial
+
+      # 3) Genera el SVG de la serpiente
+      - name: Generate snake SVG
+        uses: Platane/snk@v3
         with:
           github_user_name: Nightmarespirits
           outputs: |
             dist/github-contribution-grid-snake.svg
-      - uses: EndBug/add-and-commit@v9
+
+      # 4) Añade y hace commit del archivo generado
+      - name: Commit & push changes
+        uses: EndBug/add-and-commit@v9
         with:
           add: 'dist/github-contribution-grid-snake.svg'
           message: 'chore: update snake'
+          github_token: ${{ secrets.GH_TOKEN }}   # o usa GITHUB_TOKEN por defecto
